@@ -1,0 +1,13 @@
+check database
+    mysql -u root -p
+    USE <atabasename>;
+    DESCRIBE users;
+    SELECT * FROM users;
+
+
+install
+    install pip
+    install flask
+    install pymysql : https://pypi.org/project/PyMySQL/
+    install sqlalchemy: https://pypi.org/project/Flask-SQLAlchemy/
+    install pip install: pip install passlib
