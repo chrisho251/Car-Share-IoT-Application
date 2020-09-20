@@ -1,11 +1,11 @@
 check database
     mysql -u root -p
-    USE <atabasename>;
+    USE <databasename>;
     DESCRIBE users;
     SELECT * FROM users;
 
 
-install
+install dependencies
     install pip
     install flask
     install pymysql : https://pypi.org/project/PyMySQL/
