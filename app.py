@@ -97,7 +97,7 @@ def photo():
 @app.route("/logout")
 def logout():
     session.clear()
-    flash("You are now logger out","success")
+    flash("You are now logged out","success")
     return redirect(url_for('login'))
 
 if __name__ =="__main__":
