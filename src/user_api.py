@@ -134,3 +134,21 @@ if __name__ == "__main__":
     app.register_blueprint(api)
 
     app.run(host="localhost", port="8080", debug=True)
+
+
+@api.route("/api/engineers/<carid>", methods=["GET"])
+def get_mac_address(carid):
+    
+    reportCar = Car_report.query.filter(Car_report.carid == carid, Car_report.status == "faulty").first()
+    result = {}
+    if(reportCar):
+        engineer = userSchema.dump(reportCar.engineer)
+        report = reportcarSchema.dump(reportCar)
+        result = {
+            "email": engineer['email'],
+            "first_name": engineer['first_name'],
+            "mac_address": engineer['mac_address'],
+            "issue": report['issue'],
+            "report_id": report['report_id']
+        }
+    return jsonify(result)
