@@ -24,12 +24,13 @@ class Server:
                         break
                     print("Received data")
                     print("Sending data back..")
-                    
+
                     if data["req"] == "validate":
                         msg = self.validate(data["email"], data["password"])
                         conn.sendall(msg.encode("utf-8"))
                     elif data["req"] == "validate_mac":
-                        msg = self.validate_mac(data["mac_address"])
+                        msg = self.validate_mac(data["mac_address"], data["email"])
+                        conn.sendall(msg.encode("utf-8"))
                     else:
                         conn.sendall("Invalid user".encode("utf-8"))
 
@@ -40,8 +41,11 @@ class Server:
     def validate(self, email, password):
         # res = requests.get("http://localhost:8080/api/userbyemail/"+email)
         # data = res.json()
-        # if not data:
-        #     return "valid"
+        # if not bool(data):
+        #     if data["password"] == password.decode("utf-8"):
+        #         return "valid"
+        #     else:
+        #         return "invalid"
         # else:
         #     return "invalid"
         if self.test["email"] == email:
@@ -52,8 +56,16 @@ class Server:
         else:
             return "invalid"
 
-    def validate_mac(self, mac_add):
-
+    def validate_mac(self, mac_add, email):
+        res = requests.get("http://localhost:8080/api/userbyemail/"+email)
+        data = res.json()
+        if not bool(data):
+            if data["mac_address"] == mac_add:
+                return "valid"
+            else:
+                return "invalid"
+        else:
+            return "invalid"
 
 if __name__ == "__main__":
     server = Server()

@@ -158,9 +158,6 @@ class Menu:
                 self.display_exit()
         else:
             self.display_exit()
-            
-
-
 
     def validate_email(self):
         email = input("Email: ").strip()
@@ -179,7 +176,7 @@ class Menu:
             return password
 
     def authenticate_user(self, email, password):
-        authentication = self.client.validate(email, password).decode("utf-8")
+        authentication = self.client.validate(email, password.encode("utf-8")).decode("utf-8")
         if authentication == "valid":
             self.current_email = email
             self.unlock_time = datetime.now().timestamp()
@@ -193,8 +190,8 @@ class Menu:
             self.display_main()
     
     def authenticate_bluetooth(self):
-        mac_address = self.blu.main()
-        self.client.validate_mac(mac_address)
+        data = self.blu.main()
+        self.client.validate_mac(data["mac_address"], data["email"])
 
     def login_menu(self):
         print("\nPlease enter your email and password")

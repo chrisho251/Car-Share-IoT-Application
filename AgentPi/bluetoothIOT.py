@@ -8,7 +8,7 @@ from client import Client
 class BluetoothIOT:
     # Main function
     def main(self):
-        user_name = input("Enter your email: ")
+        user_name = input("\nEnter your email: ")
         device_name = input("Enter the name of your phone: ")
         return self.search(user_name, device_name)
         
@@ -26,7 +26,7 @@ class BluetoothIOT:
                     break
             if device_address is not None:
                 print("Hi {}! Your phone ({}) has the MAC address: {}".format(user_name, device_name, device_address))
-                return device_address
+                return {"mac_address": device_address, "email": user_name}
             else:
                 print("Could not find target device nearby...")
                 return ""

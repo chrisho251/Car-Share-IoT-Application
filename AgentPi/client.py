@@ -22,8 +22,8 @@ class Client:
         obj = {"req": "validate", "email": email, "password": password}
         return self.send_data(obj)
 
-    def validate_mac(self, mac_add):
-        obj = {"req": "validate_mac", "mac_address": mac_add}
+    def validate_mac(self, mac_add, email):
+        obj = {"req": "validate_mac", "mac_address": mac_add, "email": email}
         return self.send_data(obj)
 
 if __name__ == "__main__":
