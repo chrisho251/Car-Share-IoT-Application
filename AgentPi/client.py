@@ -14,8 +14,7 @@ class Client:
 
             socket_utils.sendJson(s,obj)
             data = s.recv(4096)
-            print("Received {} bytes of data decoded to: '{}'".format(
-                len(data), data.decode("utf-8")))
+            print("Data received")
         return data
 
     def validate(self, email, password):

@@ -7,6 +7,7 @@ from bluetoothIOT import BluetoothIOT
 
 class Menu:
     INVALID_INPUT = "Invalid input, please try again!"
+    INVALID_USER = "Invalid user, please login again!"
     client = Client()
     blu = BluetoothIOT()
     current_time = time.strftime("%b %y %H:%M", time.localtime())
@@ -102,8 +103,8 @@ class Menu:
             self.login_menu()
         # elif choice == '2':
         #     ...
-        # elif choice == '3':
-        #     ...
+        elif choice == '3':
+            self.authenticate_bluetooth()
         elif choice == '4':
             self.is_user = True
             self.display_main()
@@ -144,7 +145,7 @@ class Menu:
         if choice1.lower() == 'q':
             choice2 = input("Are you sure you want to logout [Y/N]: ")
             if choice2.lower() == 'y':
-                self.lock_time = datetime.now().timestamp()
+                self.lock_time = round(datetime.now().timestamp())
                 print("\nThe car has been used for: {}s".format(self.lock_time-self.unlock_time))
                 print("""
                 *********************************
@@ -176,22 +177,33 @@ class Menu:
             return password
 
     def authenticate_user(self, email, password):
-        authentication = self.client.validate(email, password.encode("utf-8")).decode("utf-8")
+        authentication = self.client.validate(email, password).decode("utf-8")
         if authentication == "valid":
             self.current_email = email
-            self.unlock_time = datetime.now().timestamp()
+            self.unlock_time = round(datetime.now().timestamp())
             if self.is_user:
                 self.display_successful_unlock_cust()
             else:
                 self.display_successful_unlock_eng()
         elif authentication == "invalid":
-            print("Invalid user, please login again!")
+            print(self.INVALID_USER)
             time.sleep(3)
             self.display_main()
     
     def authenticate_bluetooth(self):
         data = self.blu.main()
-        self.client.validate_mac(data["mac_address"], data["email"])
+        if not bool(data):
+            authentication = self.client.validate_mac(data["mac_address"], data["email"]).decode("utf-8")
+            if authentication == "valid":
+                self.current_email = data["email"]
+                self.unlock_time = round(datetime.now().timestamp())
+                self.display_successful_unlock_eng()
+            elif authentication == "invalid":
+                print(self.INVALID_USER)
+                time.sleep(3)
+                self.display_main()
+        else:
+            self.display_eng()
 
     def login_menu(self):
         print("\nPlease enter your email and password")

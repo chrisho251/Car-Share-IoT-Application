@@ -29,7 +29,8 @@ class BluetoothIOT:
                 return {"mac_address": device_address, "email": user_name}
             else:
                 print("Could not find target device nearby...")
-                return ""
+                time.sleep(3)
+                return {}
 
 if __name__ == "__main__":
     blu = BluetoothIOT()
