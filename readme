@@ -14,7 +14,7 @@ install dependencies
     install marshmallow-sqlalchemy
     install mysql-connector-python or install pymysql or install mysqlclient
     install sqlalchemy: https://pypi.org/project/Flask-SQLAlchemy/
-    install pip install: pip install passlib
+    install passlib
     install opencv-contrib-python
     install dlib
     install face_recognition
