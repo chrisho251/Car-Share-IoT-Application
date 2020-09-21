@@ -2,18 +2,27 @@ import os
 import time
 from datetime import datetime
 from client import Client
+from bluetoothIOT import BluetoothIOT
+from qr_auth import Qr_auth
 # from echo_client import Client
+
 
 class Menu:
     INVALID_INPUT = "Invalid input, please try again!"
+    INVALID_USER = "Invalid user, please login again!"
     client = Client()
+    blu = BluetoothIOT()
+    qrauth = Qr_auth()
     current_time = time.strftime("%b %y %H:%M", time.localtime())
     unlock_time = None
     lock_time = None
     current_email = ""
     car_id = "1"
     car_brand = "toyota"
+    car_color = "red"
+    car_seat = "7"
     is_user = True
+    is_return = False
 
     def main_menu(self):
         welcome = """
@@ -48,6 +57,22 @@ class Menu:
         option4 = "[4] BACK"
         print(intro, option1, option2, option3, option4,  sep='\n')
 
+    def successful_unlock(self):
+        print("""
+        ******************************
+        * CAR SUCCESSFULLY UNLOCKED! *
+        ******************************
+        """)
+        print("Hi {}, welcome to {}, id: {}\n".format(
+            self.current_email, self.car_brand, self.car_id))
+
+    def successful_unlock_eng(self):
+        choice = input("Do you want to start the repair now? [Y/N]: ")
+        if choice.lower() == 'y':
+            print("Repair in process..")
+        else:
+            self.successful_unlock_eng()
+
     def get_input(self):
         option = input("Enter the number of your choice: ")
         return option
@@ -57,14 +82,15 @@ class Menu:
         if choice == '1':
             self.display_cust()
         elif choice == '2':
+            self.is_user = False
             self.display_eng()
 
     def handle_selection_cust(self):
         choice = self.get_input()
         if choice == '1':
             self.display_cust_unlock()
-        # elif choice == '2':
-        #     ...
+        elif choice == '2':
+            self.display_return_car()
         elif choice == '3':
             self.display_main()
 
@@ -83,9 +109,10 @@ class Menu:
             self.login_menu()
         # elif choice == '2':
         #     ...
-        # elif choice == '3':
-        #     ...
+        elif choice == '3':
+            self.authenticate_bluetooth()
         elif choice == '4':
+            self.is_user = True
             self.display_main()
 
     def display_main(self):
@@ -104,38 +131,47 @@ class Menu:
         self.handle_selection_cust_unlock()
 
     def display_eng(self):
-        self.is_user = False
         self.clear_terminal()
         self.menu_eng()
         self.handle_selection_eng()
 
-    def display_successful_unlock(self):
-        print("""
-        ******************************
-        * CAR SUCCESSFULLY UNLOCKED! *
-        ******************************
-        """)
-        print("Hi {}, welcome to {}, id: {}".format(self.current_email, self.car_brand, self.car_id))
+    def display_successful_unlock_cust(self):
+        self.clear_terminal()
+        self.successful_unlock()
+        self.display_exit()
+
+    def display_successful_unlock_eng(self):
+        self.clear_terminal()
+        self.successful_unlock()
+        self.successful_unlock_eng()
+        self.display_exit()
+
+    def display_return_car(self):
+        self.is_return = True
+        self.login_menu()
 
     def display_exit(self):
         choice1 = input("Enter Q/q to exit: ")
         if choice1.lower() == 'q':
             choice2 = input("Are you sure you want to logout [Y/N]: ")
             if choice2.lower() == 'y':
-                self.lock_time = datetime.now().timestamp()
-                print("The car has been used for: {}s".format(self.unlock_time-self.lock_time))
+                self.lock_time = round(datetime.now().timestamp())
                 print("""
                 *********************************
                 * THANK YOU FOR USING CARSHARE! *
                 *********************************
                 """)
+                print("\nThe car has been used for: {}s".format(
+                    self.lock_time-self.unlock_time))
+                print("\nTHE CAR IS NOW LOCKED!")
                 time.sleep(5)
+                self.is_user = True
+                self.current_email = ""
                 self.display_main()
+            else:
+                self.display_exit()
         else:
             self.display_exit()
-            
-
-
 
     def validate_email(self):
         email = input("Email: ").strip()
@@ -144,7 +180,7 @@ class Menu:
             self.display_cust_unlock()
         else:
             return email
-    
+
     def validate_password(self):
         password = input("Password: ").strip()
         if password is None or password == "":
@@ -154,13 +190,60 @@ class Menu:
             return password
 
     def authenticate_user(self, email, password):
-        authentication = self.client.validate(email, password)
+        authentication = self.client.validate(email, password).decode("utf-8")
         if authentication == "valid":
             self.current_email = email
-            self.unlock_time = datetime.now().timestamp()
-            self.display_successful_unlock()
+            self.unlock_time = round(datetime.now().timestamp())
+            if self.is_user and not self.is_return:
+                self.display_successful_unlock_cust()
+            elif self.is_user and self.is_return:
+                self.return_car()
+            else:
+                self.display_successful_unlock_eng()
         elif authentication == "invalid":
-            print("Invalid user, please login again!")
+            print(self.INVALID_USER)
+            time.sleep(3)
+            self.display_main()
+
+    def authenticate_bluetooth(self):
+        data = self.blu.main()
+        if not bool(data):
+            authentication = self.client.validate_mac(
+                data["mac_address"], data["email"]).decode("utf-8")
+            if authentication == "valid":
+                self.current_email = data["email"]
+                self.unlock_time = round(datetime.now().timestamp())
+                self.display_successful_unlock_eng()
+            elif authentication == "invalid":
+                print(self.INVALID_USER)
+                time.sleep(3)
+                self.display_main()
+        else:
+            self.display_eng()
+
+    def authenticate_qr(self):
+        email = self.qrauth.read_qr()
+        authentication = self.client.validate_qr(email).decode("utf-8")
+        if authentication == "valid":
+            self.current_email = email
+            self.unlock_time = round(datetime.now().timestamp())
+            self.display_successful_unlock_eng()
+        elif authentication == "invalid":
+            print(self.INVALID_USER)
+            time.sleep(3)
+            self.display_main()
+
+    def return_car(self):
+        successful_return = self.client.return_car(self.car_id)
+        if successful_return:
+            print("""
+                *********************************
+                * THANK YOU FOR USING CARSHARE! *
+                *********************************
+                """)
+            print("Car (id: {}, model: {}) is succesfully returned at {}".format(
+                self.car_id, self.car_brand, self.current_time))
+            print("Total time used: {}".format(self.lock_time-self.unlock_time))
             self.display_main()
 
     def login_menu(self):
@@ -170,10 +253,11 @@ class Menu:
         self.authenticate_user(email, password)
 
     def clear_terminal(self):
-        os.system('cls')
+        os.system('clear')
 
     def main(self):
         self.display_main()
+
 
 if __name__ == "__main__":
     menu = Menu()

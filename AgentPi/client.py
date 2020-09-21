@@ -14,12 +14,23 @@ class Client:
 
             socket_utils.sendJson(s,obj)
             data = s.recv(4096)
-            print("Received {} bytes of data decoded to: '{}'".format(
-                len(data), data.decode("utf-8")))
+            print("Data received")
         return data
 
-    def validate(self, username, password):
-        obj = {"req": "validate", "username": username, "password": password}
+    def validate(self, email, password):
+        obj = {"req": "validate", "email": email, "password": password}
+        return self.send_data(obj)
+
+    def validate_mac(self, mac_add, email):
+        obj = {"req": "validate_mac", "mac_address": mac_add, "email": email}
+        return self.send_data(obj)
+
+    def validate_qr(self, email):
+        obj = {"req": "validate_qr", "email": email}
+        return self.send_data(obj)
+
+    def return_car(self, car_id):
+        obj = {"req": "return", "car_id": car_id}
         return self.send_data(obj)
 
 if __name__ == "__main__":
