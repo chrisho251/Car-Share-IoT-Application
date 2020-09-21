@@ -29,6 +29,10 @@ class Client:
         obj = {"req": "validate_qr", "email": email}
         return self.send_data(obj)
 
+    def return_car(self, car_id):
+        obj = {"req": "return", "car_id": car_id}
+        return self.send_data(obj)
+
 if __name__ == "__main__":
     client = Client()
     client.send_data("haha")

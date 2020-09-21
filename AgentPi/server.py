@@ -40,6 +40,8 @@ class Server:
                     elif data["req"] == "validate_qr":
                         msg = self.validate_qr(data["email"])
                         conn.sendall(msg.encode("utf-8"))
+                    elif data["req"] == "return":
+                        msg = self.return_car(data["car_id"])
                     else:
                         conn.sendall("Invalid user".encode("utf-8"))
 
@@ -81,13 +83,18 @@ class Server:
             return "invalid"
 
     def validate_qr(self, email):
-        # res = requests.get("http://localhost:8080/api/userbyemail/"+email)
-        # data = res.json()
-        # if not bool(data):
-        #     return "valid"
-        # else:
-        #     return "invalid"
+        res = requests.get("http://localhost:8080/api/userbyemail/"+email)
+        data = res.json()
+        if not bool(data):
+            return "valid"
+        else:
+            return "invalid"
 
+    def return_car(self, car_id):
+        # res = requests.get("http://localhost:8080/api/cars/"+car_id)
+        # data = res.json()
+        # res2 = requests.put("http://localhost:8080/api/userbyemail/"+email)
+        return "success"
 
 if __name__ == "__main__":
     server = Server()
