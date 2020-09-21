@@ -121,22 +121,6 @@ def edit_user():
 
     return userSchema.jsonify(user)
 
-    if __name__ == "__main__":
-        HOST = "35.185.177.46"
-        USER = "root"
-        PASSWORD = "696969"
-        DATABASE = "carshare"
-        
-    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://{}:{}@{}/{}".format(USER, PASSWORD, HOST, DATABASE)
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
-
-    db.init_app(app)
-
-    app.register_blueprint(api)
-
-    app.run(host="localhost", port="8080", debug=True)
-
-
 @api.route("/api/engineers/<carid>", methods=["GET"])
 def get_mac_address(carid):
     

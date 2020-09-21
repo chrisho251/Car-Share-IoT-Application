@@ -19,7 +19,7 @@ class User(db.Model):
     face_recognization = db.Column(db.LargeBinary(), nullable = True)
     mac_address = db.Column(db.String(200), nullable = True)
     booking = db.relationship("Booking", backref='customer')
-    reported_issues = db.relationship("Rerpot_car", backref='engineer')
+    reported_issues = db.relationship("Car_report", backref='engineer')
     
     def __repr__(self):
         return "User(user_id='%s', password='%s', email='%s', fullname='%s', lastname'%s')>"%(
@@ -38,7 +38,7 @@ class Car(db.Model):
     location = db.Column(db.String(255), nullable = False)
     availability = db.Column(db.Boolean, default = True, nullable=False)
     booking = db.relationship('Booking', backref='car')
-    reported_issues = db.relationship('Rerport_car', backref='car')
+    reported_issues = db.relationship('Car_report', backref='car')
 
     def __repr__(self):
         return "Car(car_id='%s', brand='%s', color='%s','seat=%s', 'location=%s', 'cost =%s','availability=%s')>"%(
