@@ -4,6 +4,7 @@ import bluetooth
 import os
 import time
 from sense_hat import SenseHat
+from client import Client
 
 # Main function
 def main():
@@ -26,16 +27,12 @@ def search(user_name, device_name):
                 break
         if device_address is not None:
             print("Hi {}! Your phone ({}) has the MAC address: {}".format(user_name, device_name, device_address))
-            sense = SenseHat()
-            temp = round(sense.get_temperature()-0.1, 2)
-            if temp <40.60 :
-                sense.show_message("Temperature lower than min temperature")
-            elif temp >= 40.60 and temp <= 40.80:
-                sense.show_message("Hi {}! Current Temp is {}*c".format(user_name, temp), scroll_speed=0.05)
-            else:
-                sense.show_message("Temperature higher than min temperature")
+            client = Client()
+            client.send_data({"mac-address":device_address})
+            return "Success"
         else:
             print("Could not find target device nearby...")
+            return "Failed"
 
 #Execute program
 main()

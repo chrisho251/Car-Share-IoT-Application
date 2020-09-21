@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint, request, jsonify, render_template, url_for, json, make_response
 from flask_sqlalchemy import SQLAlchemy
-from flask import currrent_app as app
+from flask import current_app as app
 import os, requests, json, sys, datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect, secure_filename
@@ -120,3 +120,17 @@ def edit_user():
 
     return userSchema.jsonify(user)
 
+if __name__ == "__main__":
+    HOST = "35.185.177.46"
+    USER = "root"
+    PASSWORD = "696969"
+    DATABASE = "carshare"
+        
+    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://{}:{}@{}/{}".format(USER, PASSWORD, HOST, DATABASE)
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+
+    db.init_app(app)
+
+    app.register_blueprint(api)
+
+    app.run(host="localhost", port="8080", debug=True)

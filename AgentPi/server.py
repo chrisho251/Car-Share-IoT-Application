@@ -1,4 +1,4 @@
-import socket
+import socket, json, requests
 import socket_utils
 
 class Server:
@@ -25,14 +25,17 @@ class Server:
                         break
                     print("Received data decoded to: '{}'\n".format(data["mac-address"]))
                     print("Sending data back..")
-                    if data["mac-address"] == "B0:55:08:D5:86:71":
-                        conn.sendall("Valid user".encode("utf-8"))
+                    if data["req"] == "validate":
+                        self.validate(data["username"], data["password"])
                     else:
                         conn.sendall("Invalid user".encode("utf-8"))
 
                 print("Disconnecting from client..")
             print("Closing listening socket..")
         print("Done!")
+
+    def validate(self, username, password):
+
 
 if __name__ == "__main__":
     server = Server()

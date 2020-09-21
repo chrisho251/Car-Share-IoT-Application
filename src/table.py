@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template, Blueprint
-from flask_sqlalchemy import flask_sqlalchemy
+from flask_sqlalchemy import SQLAlchemy
 import os, requests, json, sys, datetime
 
 

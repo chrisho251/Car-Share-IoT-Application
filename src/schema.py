@@ -6,28 +6,28 @@ from table import *
 
 ma = Marshmallow()
 
-class userSchema(ma.Schema):
+class UserSchema(ma.Schema):
 
     class Meta:
         model = User
         fields = ("user_id", "email", "password", "first_name", "last_name", "face_regconization", "user_class", "mac_address")
 
-userSchema = userSchema()
-usersSchema = userSchema(many=True)
+userSchema = UserSchema()
+usersSchema = UserSchema(many=True)
 
 
-class carSchema(ma.Schema):
+class CarSchema(ma.Schema):
     
     class Meta:
         model = Car
         fields = ("car_id", "brand", "color", "seat",
                   "location", "cost", "availability")
 
-carSchema = carSchema()
-carsSchema = carSchema(many=True)
+carSchema = CarSchema()
+carsSchema = CarSchema(many=True)
 
 
-class bookingSchema(ma.Schema):
+class BookingSchema(ma.Schema):
     
     class Meta:
         model = Booking
@@ -35,15 +35,15 @@ class bookingSchema(ma.Schema):
                   "to_date", "isActive", "total_cost")
     car = ma.Nested(CarSchema)
 
-bookingSchema = bookingSchema()
-bookingsSchema = bookingSchema(many=True)
+bookingSchema = BookingSchema()
+bookingsSchema = BookingSchema(many=True)
 
 
-class carReportSchema(ma.Schema):
+class CarReportSchema(ma.Schema):
     
     class Meta:
         model = Car_report
         fields = ("report_id", "car_id", "user_id", "issue", "status", "report_date")
 
-reportcarSchema = carReportSchema()
-reportcarsSchema = carReportSchema(many=True)
+reportcarSchema = CarReportSchema()
+reportcarsSchema = CarReportSchema(many=True)
