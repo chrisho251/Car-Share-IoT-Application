@@ -11,7 +11,7 @@ from schema import *
 import pathlib
 sys.path.append(os.path.abspath('../Facial recognition'))
 sys.path.append(os.path.abspath('../../src/QRReader'))
-from create_qr import create_qr
+# from create_qr import create_qr
 from PIL import Image
 import glob, shutil
 

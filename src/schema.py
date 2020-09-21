@@ -2,7 +2,7 @@ from flask import Flask, Blueprint, request, jsonify, render_template, url_for, 
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow, fields, Schema
 import os, requests, json, sys
-from table import * 
+from table import *
 
 ma = Marshmallow()
 

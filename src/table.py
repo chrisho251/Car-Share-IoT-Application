@@ -1,17 +1,15 @@
-from flask import Flask, Blueprint, request, jsonify, render_template, url_for, json, make_response
+from flask import Flask, Blueprint
 from flask_sqlalchemy import SQLAlchemy
-from flask import currrent_app as app
-import os, requests, json, sys, datetime
-from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import redirect, secure_filename
+from flask import current_app as app
 
 app = Flask(__name__)
 api = Blueprint("api",__name__)
 db = SQLAlchemy()
 
+
 class User(db.Model):
 
-    __tablename__="user"
+    __tablename__  = "user"
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     password=db.Column(db.String(100), nullable = False)
     email = db.Column(db.String(255), unique=True, nullable = False)
