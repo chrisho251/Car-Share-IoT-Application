@@ -1,13 +1,15 @@
-from flask import Flask, request, jsonify, render_template, Blueprint
+from flask import Flask, Blueprint
 from flask_sqlalchemy import SQLAlchemy
-import os, requests, json, sys, datetime
+from flask import current_app as app
 
-
+app = Flask(__name__)
+api = Blueprint("api",__name__)
 db = SQLAlchemy()
+
 
 class User(db.Model):
 
-    __tablename__="user"
+    __tablename__  = "user"
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     password=db.Column(db.String(100), nullable = False)
     email = db.Column(db.String(255), unique=True, nullable = False)

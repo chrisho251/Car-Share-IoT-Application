@@ -1,14 +1,11 @@
 from flask import Flask, Blueprint, request, jsonify, render_template, url_for, json, make_response
 from flask_sqlalchemy import SQLAlchemy
-from flask import currrent_app as app
-import os, requests, json, sys, datetime
-from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import redirect, secure_filename
+from flask import current_app as app
+import os, requests, sys, datetime
 from schema import *
 
 app = Flask(__name__)
 api = Blueprint("api",__name__)
-db = SQLAlchemy()
 
 
 @api.route("/api/getcars", methods=["GET"])
@@ -18,7 +15,7 @@ def get_all_cars():
 
     return carSchema.jsonify(car)
 
-
+ 
 @api.route("/api/cars/<carid>", methods=["GET"])
 def get_cars_by_id(carid):
     

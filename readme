@@ -8,6 +8,15 @@ check database
 install dependencies
     install pip
     install flask
-    install pymysql : https://pypi.org/project/PyMySQL/
+    install flask-sqlalchemy
+    install marshmallow
+    install flask-marshmallow
+    install marshmallow-sqlalchemy
+    install mysql-connector-python or install pymysql or install mysqlclient
     install sqlalchemy: https://pypi.org/project/Flask-SQLAlchemy/
-    install pip install: pip install passlib
+    install passlib
+    install opencv-contrib-python
+    install dlib
+    install face_recognition
+    install imutils
+    install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib

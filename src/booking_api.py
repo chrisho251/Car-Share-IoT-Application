@@ -1,14 +1,11 @@
 from flask import Flask, Blueprint, request, jsonify, render_template, url_for, json, make_response
 from flask_sqlalchemy import SQLAlchemy
-from flask import currrent_app as app
+from flask import current_app as app
 import os, requests, json, sys, datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect, secure_filename
 from schema import *
 
-app = Flask(__name__)
-api = Blueprint("api",__name__)
-db = SQLAlchemy()
 
 
 @api.route("/api/bookings", methods=["GET"])
