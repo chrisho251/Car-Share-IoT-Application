@@ -6,8 +6,7 @@ class Server:
                  # Note "0.0.0.0" also works but only with IPv4.
     PORT = 65000 # Port to listen on (non-privileged ports are > 1023).
     ADDRESS = (HOST, PORT)
-    username = ""
-    password = ""
+    test = {"email": "giaminhphamle@gmail.com", "password": "696969"}
 
     def receive_data(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -23,10 +22,14 @@ class Server:
                     data = socket_utils.receiveJson(conn)
                     if(not data):
                         break
-                    print("Received data decoded to: '{}'\n".format(data["mac-address"]))
+                    print("Received data")
                     print("Sending data back..")
+                    
                     if data["req"] == "validate":
-                        self.validate(data["username"], data["password"])
+                        msg = self.validate(data["email"], data["password"])
+                        conn.sendall(msg.encode("utf-8"))
+                    elif data["req"] == "validate_mac":
+                        msg = self.validate_mac(data["mac_address"])
                     else:
                         conn.sendall("Invalid user".encode("utf-8"))
 
@@ -34,7 +37,22 @@ class Server:
             print("Closing listening socket..")
         print("Done!")
 
-    def validate(self, username, password):
+    def validate(self, email, password):
+        # res = requests.get("http://localhost:8080/api/userbyemail/"+email)
+        # data = res.json()
+        # if not data:
+        #     return "valid"
+        # else:
+        #     return "invalid"
+        if self.test["email"] == email:
+            if self.test["password"] == password:
+                return "valid"
+            else:
+                return "invalid"
+        else:
+            return "invalid"
+
+    def validate_mac(self, mac_add):
 
 
 if __name__ == "__main__":

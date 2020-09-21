@@ -18,8 +18,12 @@ class Client:
                 len(data), data.decode("utf-8")))
         return data
 
-    def validate(self, username, password):
-        obj = {"req": "validate", "username": username, "password": password}
+    def validate(self, email, password):
+        obj = {"req": "validate", "email": email, "password": password}
+        return self.send_data(obj)
+
+    def validate_mac(self, mac_add):
+        obj = {"req": "validate_mac", "mac_address": mac_add}
         return self.send_data(obj)
 
 if __name__ == "__main__":

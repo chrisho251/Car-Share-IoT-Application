@@ -60,3 +60,7 @@ class qr_auth:
         # close the output CSV file do a bit of cleanup
         print("[INFO] cleaning up...")
         vid_stream.stop()
+
+if __name__ == "__main__":
+    qrauth = qr_auth()
+    qrauth.read_qr()

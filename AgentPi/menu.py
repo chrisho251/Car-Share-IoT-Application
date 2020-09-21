@@ -2,11 +2,13 @@ import os
 import time
 from datetime import datetime
 from client import Client
+from bluetoothIOT import BluetoothIOT
 # from echo_client import Client
 
 class Menu:
     INVALID_INPUT = "Invalid input, please try again!"
     client = Client()
+    blu = BluetoothIOT()
     current_time = time.strftime("%b %y %H:%M", time.localtime())
     unlock_time = None
     lock_time = None
@@ -143,7 +145,7 @@ class Menu:
             choice2 = input("Are you sure you want to logout [Y/N]: ")
             if choice2.lower() == 'y':
                 self.lock_time = datetime.now().timestamp()
-                print("The car has been used for: {}s".format(self.unlock_time-self.lock_time))
+                print("\nThe car has been used for: {}s".format(self.lock_time-self.unlock_time))
                 print("""
                 *********************************
                 * THANK YOU FOR USING CARSHARE! *
@@ -177,7 +179,7 @@ class Menu:
             return password
 
     def authenticate_user(self, email, password):
-        authentication = self.client.validate(email, password)
+        authentication = self.client.validate(email, password).decode("utf-8")
         if authentication == "valid":
             self.current_email = email
             self.unlock_time = datetime.now().timestamp()
@@ -187,7 +189,12 @@ class Menu:
                 self.display_successful_unlock_eng()
         elif authentication == "invalid":
             print("Invalid user, please login again!")
+            time.sleep(3)
             self.display_main()
+    
+    def authenticate_bluetooth(self):
+        mac_address = self.blu.main()
+        self.client.validate_mac(mac_address)
 
     def login_menu(self):
         print("\nPlease enter your email and password")
@@ -196,7 +203,7 @@ class Menu:
         self.authenticate_user(email, password)
 
     def clear_terminal(self):
-        os.system('cls')
+        os.system('clear')
 
     def main(self):
         self.display_main()

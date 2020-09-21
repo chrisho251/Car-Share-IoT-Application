@@ -5,33 +5,32 @@ import bluetooth
 from sense_hat import SenseHat
 from client import Client
 
-# Main function
-def main():
-    user_name = input("Enter your name: ")
-    device_name = input("Enter the name of your phone: ")
-    search(user_name, device_name)
-    
-# Search for device based on device's name
-def search(user_name, device_name):
-    while True:
-        device_address = None
-        dt = time.strftime("%a, %d %b %y %H:%M:%S", time.localtime())
-        print("\nCurrently: {}".format(dt))
-        time.sleep(3) #Sleep three seconds 
-        nearby_devices = bluetooth.discover_devices()
+class BluetoothIOT:
+    # Main function
+    def main(self):
+        user_name = input("Enter your email: ")
+        device_name = input("Enter the name of your phone: ")
+        return self.search(user_name, device_name)
+        
+    # Search for device based on device's name
+    def search(self,user_name, device_name):
+        while True:
+            device_address = None
+            print("Searching for device..")
+            time.sleep(2) #Sleep 2 seconds 
+            nearby_devices = bluetooth.discover_devices()
 
-        for mac_address in nearby_devices:
-            if device_name == bluetooth.lookup_name(mac_address, timeout=5):
-                device_address = mac_address
-                break
-        if device_address is not None:
-            print("Hi {}! Your phone ({}) has the MAC address: {}".format(user_name, device_name, device_address))
-            client = Client()
-            client.send_data({"mac-address":device_address})
-            return "Success"
-        else:
-            print("Could not find target device nearby...")
-            return "Failed"
+            for mac_address in nearby_devices:
+                if device_name == bluetooth.lookup_name(mac_address, timeout=5):
+                    device_address = mac_address
+                    break
+            if device_address is not None:
+                print("Hi {}! Your phone ({}) has the MAC address: {}".format(user_name, device_name, device_address))
+                return device_address
+            else:
+                print("Could not find target device nearby...")
+                return ""
 
-#Execute program
-main()
+if __name__ == "__main__":
+    blu = BluetoothIOT()
+    blu.main()
