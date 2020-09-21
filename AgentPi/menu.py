@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 from client import Client
 from bluetoothIOT import BluetoothIOT
+from qr_auth import Qr_auth
 # from echo_client import Client
 
 class Menu:
@@ -10,6 +11,7 @@ class Menu:
     INVALID_USER = "Invalid user, please login again!"
     client = Client()
     blu = BluetoothIOT()
+    qrauth = Qr_auth()
     current_time = time.strftime("%b %y %H:%M", time.localtime())
     unlock_time = None
     lock_time = None
@@ -204,6 +206,18 @@ class Menu:
                 self.display_main()
         else:
             self.display_eng()
+    
+    def authenticate_qr(self):
+        email = self.qrauth.read_qr()
+        authentication = self.client.validate_qr(email).decode("utf-8")
+        if authentication == "valid":
+            self.current_email = email
+            self.unlock_time = round(datetime.now().timestamp())
+            self.display_successful_unlock_eng()
+        elif authentication == "invalid":
+            print(self.INVALID_USER)
+            time.sleep(3)
+            self.display_main()
 
     def login_menu(self):
         print("\nPlease enter your email and password")

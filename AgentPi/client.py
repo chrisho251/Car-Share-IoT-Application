@@ -25,6 +25,10 @@ class Client:
         obj = {"req": "validate_mac", "mac_address": mac_add, "email": email}
         return self.send_data(obj)
 
+    def validate_qr(self, email):
+        obj = {"req": "validate_qr", "email": email}
+        return self.send_data(obj)
+
 if __name__ == "__main__":
     client = Client()
     client.send_data("haha")

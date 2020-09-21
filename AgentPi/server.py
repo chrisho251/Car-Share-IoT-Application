@@ -7,7 +7,7 @@ import socket_utils
 class Server:
     # Empty string means to listen on all IP's on the machine, also works with IPv6.
     HOST = ""
-               # Note "0.0.0.0" also works but only with IPv4.
+    # Note "0.0.0.0" also works but only with IPv4.
     PORT = 65000  # Port to listen on (non-privileged ports are > 1023).
     ADDRESS = (HOST, PORT)
     test = {"email": "giaminhphamle@gmail.com",
@@ -35,9 +35,11 @@ class Server:
                         conn.sendall(msg.encode("utf-8"))
                     elif data["req"] == "validate_mac":
                         msg = self.validate_mac(
-                        data["mac_address"], data["email"])
+                            data["mac_address"], data["email"])
                         conn.sendall(msg.encode("utf-8"))
-                        break
+                    elif data["req"] == "validate_qr":
+                        msg = self.validate_qr(data["email"])
+                        conn.sendall(msg.encode("utf-8"))
                     else:
                         conn.sendall("Invalid user".encode("utf-8"))
 
@@ -77,6 +79,14 @@ class Server:
             return "valid"
         else:
             return "invalid"
+
+    def validate_qr(self, email):
+        # res = requests.get("http://localhost:8080/api/userbyemail/"+email)
+        # data = res.json()
+        # if not bool(data):
+        #     return "valid"
+        # else:
+        #     return "invalid"
 
 
 if __name__ == "__main__":
