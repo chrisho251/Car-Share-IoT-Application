@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h1>Profile Page</h1>
+<div>
+    <p>Profile:</p>
+    <table table>
+        <tr>
+            <td>Your full name:</td>
+            <td>{{ account['first_name'] }} {{ account['last_name'] }}</td>
+        </tr>
+        <tr>
+            <td>Username/email:</td>
+            <td>{{ account['email'] }}</td>
+        </tr>
+    </table>
+</div>
+
+{% endblock %}
