@@ -89,8 +89,8 @@ class Menu:
         choice = self.get_input()
         if choice == '1':
             self.display_cust_unlock()
-        # elif choice == '2':
-        #     ...
+        elif choice == '2':
+            self.display_return_car()
         elif choice == '3':
             self.display_main()
 
