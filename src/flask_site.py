@@ -12,14 +12,13 @@ import pathlib
 sys.path.append(os.path.abspath('../Facial recognition'))
 sys.path.append(os.path.abspath('../../src/QRReader'))
 # from create_qr import create_qr
-from PIL import Image
 import glob, shutil
 
 app = Flask(__name__)
 site = Blueprint("site", __name__)
 app_root = os.path.dirname(os.path.abspath(__file__))
 
-@site.route('/', methods=['GET', 'POST'])
+@site.route('/login', methods=['GET', 'POST'])
 def login():
   
     
@@ -51,7 +50,7 @@ def login():
             # Account doesnt exist or username/password incorrect
             msg = 'Wrong username or password. Please check again'
     # Show the login form with message (if any)
-    return render_template('index.html', msg=msg)
+    return render_template('login.html', msg=msg)
 
 
 # logs out user from the system
@@ -184,55 +183,56 @@ def register():
     
     msg = ''
     
-    if request.method == 'POST' and 'first_name' in request.form and 'last_name' in request.form and 'username' in request.form and 'password' in request.form and 'confirmpassword' in request.form:
+    if request.method == 'POST' and 'name' in request.form and 'gmail' in request.form and 'username' in request.form and 'password' in request.form and 'confirm' in request.form:
 
         # Create variables for easy access
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
+        first_name = request.form['name']
+        last_name = request.form['gmail']
         username = request.form['username']
         password = request.form['password']
-        confirmpassword = request.form['confirmpassword']
+        confirmpassword = request.form['confirm']
 
-        if 'logged_in' in session and session['user_class'] == 'admin':
-            user_class = request.form['user_class']
-            mac_address = request.form['mac_address']
-        else:
-            user_class = 'customer'
-            mac_address = ''
+        print(first_name, last_name, username, password, confirmpassword, sep='\n')
+    #     if 'logged_in' in session and session['user_class'] == 'admin':
+    #         user_class = request.form['user_class']
+    #         mac_address = request.form['mac_address']
+    #     else:
+    #         user_class = 'customer'
+    #         mac_address = ''
         
-        if not re.match(r'[^@]+@[^@]+\.[^@]+', username):
-            msg = 'Invalid email address!'
-        elif not re.match(r'[A-Za-z0-9]+', first_name) or not re.match(r'[A-Za-z0-9]+', last_name):
-            msg = 'First or last name must contain only characters and numbers!'
-        elif not first_name or not last_name or not username or not password:
-            msg = 'Please fill out the form again'
-        elif len(password) < 8:
-            msg = 'Password must have at least 8 characters.'
-        elif password != confirmpassword:
-            msg = "Password does not match."
-        else:
-            #check if user exists            
-            response = requests.get("http://localhost:8080/api/userbyemail/"+str(username))
-            account = json.loads(response.text) 
-            if account:
-                msg = 'Account existed.'
-            else:
-                response = ''
-                # make a api call to save the user.
-                response = requests.post("http://localhost:8080/api/adduser", {
-                                        "email": username, "password": password, "first_name": first_name, "last_name": last_name, "user_class": user_class, "mac_address": mac_address})
-                data = json.loads(response.text)
+    #     if not re.match(r'[^@]+@[^@]+\.[^@]+', username):
+    #         msg = 'Invalid email address!'
+    #     elif not re.match(r'[A-Za-z0-9]+', first_name) or not re.match(r'[A-Za-z0-9]+', last_name):
+    #         msg = 'First or last name must contain only characters and numbers!'
+    #     elif not first_name or not last_name or not username or not password:
+    #         msg = 'Please fill out the form again'
+    #     elif len(password) < 8:
+    #         msg = 'Password must have at least 8 characters.'
+    #     elif password != confirmpassword:
+    #         msg = "Password does not match."
+    #     else:
+    #         #check if user exists            
+    #         response = requests.get("http://localhost:8080/api/userbyemail/"+str(username))
+    #         account = json.loads(response.text) 
+    #         if account:
+    #             msg = 'Account existed.'
+    #         else:
+    #             response = ''
+    #             # make a api call to save the user.
+    #             response = requests.post("http://localhost:8080/api/adduser", {
+    #                                     "email": username, "password": password, "first_name": first_name, "last_name": last_name, "user_class": user_class, "mac_address": mac_address})
+    #             data = json.loads(response.text)
 
-                # check if response data is valid
-                if data:
-                    msg = 'You are registerd and can login'
-    elif request.method == 'POST':
-        # Form is empty... (no POST data)
-        msg = 'Please fill out the form.'
+    #             # check if response data is valid
+    #             if data:
+    #                 msg = 'You are registerd and can login'
+    # elif request.method == 'POST':
+    #     # Form is empty... (no POST data)
+    #     msg = 'Please fill out the form.'
 
-    if 'logged_in' in session and session['user_class'] == 'admin':
-        flash(msg)
-        return redirect(url_for('site.home'))
+    # if 'logged_in' in session and session['user_class'] == 'admin':
+    #     flash(msg)
+    #     return redirect(url_for('site.home'))
 
     # Show registration form with message (if any)
     return render_template('register.html', msg=msg)
