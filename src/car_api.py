@@ -8,7 +8,6 @@ from schema import *
 
 app = Flask(__name__)
 api = Blueprint("api",__name__)
-db = SQLAlchemy()
 
 
 @api.route("/api/getcars", methods=["GET"])
@@ -18,7 +17,7 @@ def get_all_cars():
 
     return carSchema.jsonify(car)
 
-
+ 
 @api.route("/api/cars/<carid>", methods=["GET"])
 def get_cars_by_id(carid):
     

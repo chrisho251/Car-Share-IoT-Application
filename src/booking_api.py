@@ -6,9 +6,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect, secure_filename
 from schema import *
 
-app = Flask(__name__)
-api = Blueprint("api",__name__)
-db = SQLAlchemy()
 
 
 @api.route("/api/bookings", methods=["GET"])

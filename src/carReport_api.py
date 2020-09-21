@@ -7,9 +7,7 @@ from werkzeug.utils import redirect, secure_filename
 from schema import *
 from table import *
 
-app = Flask(__name__)
-api = Blueprint("api",__name__)
-db = SQLAlchemy()
+
 
 @api.route("/api/reportcar", methods=["POST"])
 def car_report():

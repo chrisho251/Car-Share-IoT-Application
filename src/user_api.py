@@ -5,10 +5,11 @@ import os, requests, json, sys, datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect, secure_filename
 from schema import *
+from carReport_api import *
 
 app = Flask(__name__)
 api = Blueprint("api",__name__)
-db = SQLAlchemy()
+
 
 
 @api.route("/api/login", methods=["POST"])
@@ -120,11 +121,11 @@ def edit_user():
 
     return userSchema.jsonify(user)
 
-if __name__ == "__main__":
-    HOST = "35.185.177.46"
-    USER = "root"
-    PASSWORD = "696969"
-    DATABASE = "carshare"
+    if __name__ == "__main__":
+        HOST = "35.185.177.46"
+        USER = "root"
+        PASSWORD = "696969"
+        DATABASE = "carshare"
         
     app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://{}:{}@{}/{}".format(USER, PASSWORD, HOST, DATABASE)
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
@@ -139,7 +140,7 @@ if __name__ == "__main__":
 @api.route("/api/engineers/<carid>", methods=["GET"])
 def get_mac_address(carid):
     
-    reportCar = Car_report.query.filter(Car_report.carid == carid, Car_report.status == "faulty").first()
+    reportCar = Car_report.query.filter(Car_report.car_id == carid, Car_report.status == "faulty").first()
     result = {}
     if(reportCar):
         engineer = userSchema.dump(reportCar.engineer)
