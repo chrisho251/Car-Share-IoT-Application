@@ -42,6 +42,7 @@ class Server:
                         conn.sendall(msg.encode("utf-8"))
                     elif data["req"] == "return":
                         msg = self.return_car(data["car_id"])
+                        conn.sendall(msg.encode("utf-8"))
                     else:
                         conn.sendall("Invalid user".encode("utf-8"))
 

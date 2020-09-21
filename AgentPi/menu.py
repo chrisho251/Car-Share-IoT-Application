@@ -6,6 +6,7 @@ from bluetoothIOT import BluetoothIOT
 from qr_auth import Qr_auth
 # from echo_client import Client
 
+
 class Menu:
     INVALID_INPUT = "Invalid input, please try again!"
     INVALID_USER = "Invalid user, please login again!"
@@ -18,6 +19,8 @@ class Menu:
     current_email = ""
     car_id = "1"
     car_brand = "toyota"
+    car_color = "red"
+    car_seat = "7"
     is_user = True
     is_return = False
 
@@ -60,7 +63,8 @@ class Menu:
         * CAR SUCCESSFULLY UNLOCKED! *
         ******************************
         """)
-        print("Hi {}, welcome to {}, id: {}\n".format(self.current_email, self.car_brand, self.car_id))
+        print("Hi {}, welcome to {}, id: {}\n".format(
+            self.current_email, self.car_brand, self.car_id))
 
     def successful_unlock_eng(self):
         choice = input("Do you want to start the repair now? [Y/N]: ")
@@ -68,7 +72,6 @@ class Menu:
             print("Repair in process..")
         else:
             self.successful_unlock_eng()
-            
 
     def get_input(self):
         option = input("Enter the number of your choice: ")
@@ -136,7 +139,7 @@ class Menu:
         self.clear_terminal()
         self.successful_unlock()
         self.display_exit()
-    
+
     def display_successful_unlock_eng(self):
         self.clear_terminal()
         self.successful_unlock()
@@ -147,19 +150,20 @@ class Menu:
         self.is_return = True
         self.login_menu()
 
-
     def display_exit(self):
         choice1 = input("Enter Q/q to exit: ")
         if choice1.lower() == 'q':
             choice2 = input("Are you sure you want to logout [Y/N]: ")
             if choice2.lower() == 'y':
                 self.lock_time = round(datetime.now().timestamp())
-                print("\nThe car has been used for: {}s".format(self.lock_time-self.unlock_time))
                 print("""
                 *********************************
                 * THANK YOU FOR USING CARSHARE! *
                 *********************************
                 """)
+                print("\nThe car has been used for: {}s".format(
+                    self.lock_time-self.unlock_time))
+                print("\nTHE CAR IS NOW LOCKED!")
                 time.sleep(5)
                 self.is_user = True
                 self.current_email = ""
@@ -176,7 +180,7 @@ class Menu:
             self.display_cust_unlock()
         else:
             return email
-    
+
     def validate_password(self):
         password = input("Password: ").strip()
         if password is None or password == "":
@@ -200,11 +204,12 @@ class Menu:
             print(self.INVALID_USER)
             time.sleep(3)
             self.display_main()
-    
+
     def authenticate_bluetooth(self):
         data = self.blu.main()
         if not bool(data):
-            authentication = self.client.validate_mac(data["mac_address"], data["email"]).decode("utf-8")
+            authentication = self.client.validate_mac(
+                data["mac_address"], data["email"]).decode("utf-8")
             if authentication == "valid":
                 self.current_email = data["email"]
                 self.unlock_time = round(datetime.now().timestamp())
@@ -215,7 +220,7 @@ class Menu:
                 self.display_main()
         else:
             self.display_eng()
-    
+
     def authenticate_qr(self):
         email = self.qrauth.read_qr()
         authentication = self.client.validate_qr(email).decode("utf-8")
@@ -230,6 +235,16 @@ class Menu:
 
     def return_car(self):
         successful_return = self.client.return_car(self.car_id)
+        if successful_return:
+            print("""
+                *********************************
+                * THANK YOU FOR USING CARSHARE! *
+                *********************************
+                """)
+            print("Car (id: {}, model: {}) is succesfully returned at {}".format(
+                self.car_id, self.car_brand, self.current_time))
+            print("Total time used: {}".format(self.lock_time-self.unlock_time))
+            self.display_main()
 
     def login_menu(self):
         print("\nPlease enter your email and password")
@@ -242,6 +257,7 @@ class Menu:
 
     def main(self):
         self.display_main()
+
 
 if __name__ == "__main__":
     menu = Menu()
