@@ -11,25 +11,24 @@ from schema import *
 import pathlib
 sys.path.append(os.path.abspath('../Facial recognition'))
 sys.path.append(os.path.abspath('../../src/QRReader'))
-# from create_qr import create_qr
 import glob, shutil
 
 app = Flask(__name__)
 site = Blueprint("site", __name__)
 app_root = os.path.dirname(os.path.abspath(__file__))
-
+#login function
 @site.route('/login', methods=['GET', 'POST'])
 def login():
   
-    
+    #message display
     msg = ''
 
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-        # Create variables for easy access
+        # Create variables 
         email = request.form['email']
         password = request.form['password'] 
 
-        # api call to save the user.
+        # api call to collect the user information.
         response = requests.post(
             "http://localhost:8080/api/login", {"email": email, "password": password})
         #print(response)
@@ -37,7 +36,7 @@ def login():
 
         # If account exists in users table in out database
         if data:
-            # Create session data, we can access this data in other routes
+            # Create session data,which allows access this data in other routes
             session['logged_in'] = True
             session['user_id'] = data['user_id']
             session['email'] = data['email']
@@ -47,17 +46,17 @@ def login():
             # Redirect to home page
             return redirect(url_for('site.home'))
         else:
-            # Account doesnt exist or username/password incorrect
-            msg = 'Wrong username or password. Please check again'
-    # Show the login form with message (if any)
+            # username/password wrong
+            msg = 'Wrong username/password'
+    # the login form
     return render_template('login.html', msg=msg)
 
 
-# logs out user from the system
+# logs out function
 @site.route('/logout')
 def logout():
 
-    # Remove session data, this will log the user out
+    # Remove session data, allows users to log out
     session.pop('logged_in', None)
     session.pop('user_id', None)
     session.pop('username', None)
@@ -65,90 +64,87 @@ def logout():
     return redirect(url_for('site.login'))
 
 
-# this will be the home page, only accessible for loggedin users
+# home page which show after logged in
 @site.route('/home', methods=['GET', 'POST'])
 def home():
 
-    # Check if user is loggedin
+    # Check if user logged in
     if 'logged_in' in session:
         user_class = session['user_class']
 
-        
+        # role is engineer 
         if user_class == 'engineer':
             reportedcars = get_reported_cars()
-            return render_template('engineer/engineer-dashboard.html', username=session['username'], reportedcars=reportedcars)
+            return render_template('engineer/engineer.html', username=session['username'], reportedcars=reportedcars)
+        #role id manager
         elif user_class == 'manager':
-            return render_template('manager/manager-dashboard.html', username=session['username'])
+            return render_template('manager/manager.html', username=session['username'])
         else:
             car_response = requests.get("http://localhost:8080/api/getcars")
             cars = json.loads(car_response.text)
-            
+            # role is admin
             if user_class == 'admin':
                 user_response = requests.get("http://localhost:8080/api/user")
                 users = json.loads(user_response.text)
 
                 bookings_response = requests.get("http://localhost:8080/api/bookings")
                 bookings = json.loads(bookings_response.text)
-                return render_template('admin/admin-dashboard.html', username=session['email'], cars=cars, users=users, bookings=bookings)
+                return render_template('admin/admin.html', username=session['email'], cars=cars, users=users, bookings=bookings)
             else:
+                # role is customer
                 return render_template('home.html', username=session['email'], cars=cars)
-    # users is not loggedin redirect to login page
+    # user does not log in will back to login page
     return redirect(url_for('site.login'))
 
-
+# see profile function
 @site.route('/profile',  methods=['GET'])
 def profile():
 
-    # Check if user is loggedin
+    # Check if user logged in
     if 'logged_in' in session:
-        # We need all the account info for the user so we can display it on the profile page
+        # display all user's information 
         response = requests.get(
             "http://localhost:8080/api/userbyid/"+str(session['user_id']))
         acc = json.loads(response.text)
-        # Show the profile page with account info
+        # display profile page
         return render_template('profile.html', account=acc)
-    # users is not loggedin redirect to login page
+    # user does not log in will back to login page
     return redirect(url_for('site.login'))
 
-
+# check car function for admin
 @site.route('/admincars', methods=['GET', 'POST'])
 def admin_cars():
-    """This function renders profile page for a user.
-    :param: None
-    :return: redirect to login page or home page.
-    """
+   # Check if user logged in
     if 'logged_in' in session:
         response = requests.get(
             "http://localhost:8080/api/getcars")
         cars = json.loads(response.text)
+        
         return render_template('admin/admin-cars.html', cars=cars)
-
+    # user does not log in will back to login page
     return redirect(url_for('site.login'))
 
 
-# get the list of bookings done by user.
+# user gets the list of bookings 
 @site.route('/bookings',  methods=['GET', 'POST'])
 def bookings():
-    """This function returns the list of bookings done for a loggedin user.
-    :param: None
-    :return: booking page with the list of booking history.
-    """
-    # check of user is loggedin
+    
+    # check of user logged in
     if 'logged_in' in session:
-        # get the booking history of the user.
+        # user see booking history
         response = requests.get(
             "http://localhost:8080/api/bookings/"+str(session['user_id']))
         bookings = json.loads(response.text)
 
         return render_template('bookings.html', bookinglist=bookings)
-    # users is not loggedin redirect to login page
+    # user does not log in will back to login page
     return redirect(url_for('site.login'))
 
-
+# cancel booking function
 @site.route('/cancelbooking',  methods=['GET', 'POST'])
 def cancelbooking():
 
-    # check of user is loggedin
+    # check if user logged in
     if 'logged_in' in session:
         if request.method == 'POST':
             booking_id = request.form['booking_id']
@@ -158,13 +154,13 @@ def cancelbooking():
             acc = json.loads(response.text)
             return redirect(url_for('site.bookings'))
 
-
+# booking car function
 @site.route('/carbooking', methods=['GET', 'POST'])
 def carbooking():
-
+    # check if user logged in
     if 'logged_in' in session:
         if request.method == 'POST':
-
+            # Create variables 
             isActive = True
             user_id = session['user_id']
             from_date = request.form['from_date']
@@ -176,7 +172,7 @@ def carbooking():
             acc = json.loads(response.text)
         return redirect(url_for('site.bookings'))
 
-
+# register function
 @site.route('/register', methods=['GET', 'POST'])
 def register():
 
@@ -185,7 +181,7 @@ def register():
     
     if request.method == 'POST' and 'name' in request.form and 'gmail' in request.form and 'username' in request.form and 'password' in request.form and 'confirm' in request.form:
 
-        # Create variables for easy access
+        # Create variables 
         first_name = request.form['name']
         last_name = request.form['gmail']
         username = request.form['username']
@@ -193,54 +189,55 @@ def register():
         confirmpassword = request.form['confirm']
 
         print(first_name, last_name, username, password, confirmpassword, sep='\n')
-    #     if 'logged_in' in session and session['user_class'] == 'admin':
-    #         user_class = request.form['user_class']
-    #         mac_address = request.form['mac_address']
-    #     else:
-    #         user_class = 'customer'
-    #         mac_address = ''
-        
-    #     if not re.match(r'[^@]+@[^@]+\.[^@]+', username):
-    #         msg = 'Invalid email address!'
-    #     elif not re.match(r'[A-Za-z0-9]+', first_name) or not re.match(r'[A-Za-z0-9]+', last_name):
-    #         msg = 'First or last name must contain only characters and numbers!'
-    #     elif not first_name or not last_name or not username or not password:
-    #         msg = 'Please fill out the form again'
-    #     elif len(password) < 8:
-    #         msg = 'Password must have at least 8 characters.'
-    #     elif password != confirmpassword:
-    #         msg = "Password does not match."
-    #     else:
-    #         #check if user exists            
-    #         response = requests.get("http://localhost:8080/api/userbyemail/"+str(username))
-    #         account = json.loads(response.text) 
-    #         if account:
-    #             msg = 'Account existed.'
-    #         else:
-    #             response = ''
-    #             # make a api call to save the user.
-    #             response = requests.post("http://localhost:8080/api/adduser", {
-    #                                     "email": username, "password": password, "first_name": first_name, "last_name": last_name, "user_class": user_class, "mac_address": mac_address})
-    #             data = json.loads(response.text)
+        # check if user login is admin
+        if 'logged_in' in session and session['user_class'] == 'admin':
+            user_class = request.form['user_class']
+            mac_address = request.form['mac_address']
+        else:
+            user_class = 'customer'
+            mac_address = ''
+        #check input information
+        if not re.match(r'[^@]+@[^@]+\.[^@]+', username):
+            msg = 'Invalid email address!'
+        elif not re.match(r'[A-Za-z0-9]+', first_name) or not re.match(r'[A-Za-z0-9]+', last_name):
+            msg = 'First or last name must contain only characters and numbers!'
+        elif not first_name or not last_name or not username or not password:
+            msg = 'Please fill out the form again'
+        elif len(password) < 8:
+            msg = 'Password must have at least 8 characters.'
+        elif password != confirmpassword:
+            msg = "Password does not match."
+        else:
+            #check if user exists            
+            response = requests.get("http://localhost:8080/api/userbyemail/"+str(username))
+            account = json.loads(response.text) 
+            if account:
+                msg = 'Account existed.'
+            else:
+                response = ''
+                # make a api call to save the user.
+                response = requests.post("http://localhost:8080/api/adduser", {
+                                        "email": username, "password": password, "first_name": first_name, "last_name": last_name, "user_class": user_class, "mac_address": mac_address})
+                data = json.loads(response.text)
 
-    #             # check if response data is valid
-    #             if data:
-    #                 msg = 'You are registerd and can login'
-    # elif request.method == 'POST':
-    #     # Form is empty... (no POST data)
-    #     msg = 'Please fill out the form.'
+                # check if response data is valid
+                if data:
+                    msg = 'You are registerd and can login'
+    elif request.method == 'POST':
+        # if the form is empty, it will display message
+        msg = 'Please fill out the form.'
 
-    # if 'logged_in' in session and session['user_class'] == 'admin':
-    #     flash(msg)
-    #     return redirect(url_for('site.home'))
+    if 'logged_in' in session and session['user_class'] == 'admin':
+        flash(msg)
+        return redirect(url_for('site.home'))
 
-    # Show registration form with message (if any)
+    # display registration form
     return render_template('register.html', msg=msg)
 
-
+# edit user function
 @site.route('/edituser', methods=['POST'])
 def edit_user():
-
+    # Create variables 
     user_id = request.form['user_id']
     first_name = request.form['first_name']
     last_name = request.form['last_name']
@@ -251,17 +248,17 @@ def edit_user():
     response = requests.post("http://localhost:8080/api/edituser", {
                                      "user_id": user_id, "email": username, "first_name": first_name, "last_name": last_name, "user_class": user_class, "mac_address": mac_address})
     data = json.loads(response.text)
-
+    # check data
     if data is None:
         flash("Failed to update the user.")
     else:
         flash("User updated sucessfully.")
     return redirect(url_for('site.home'))
 
-
+# delete user function
 @site.route('/deluser', methods=['POST'])
 def delete_user():
-
+     # check if user logged in
     if 'logged_in' in session:
         user_id = request.form['user_id']
 
@@ -269,17 +266,17 @@ def delete_user():
             "http://localhost:8080/api/deluser/"+str(user_id))
 
         acc = json.loads(response.text)
-
+        # check account
         if acc is None:
             flash("Cannot delete the user")
         else:
             flash("Deleted successfully.")
         return redirect(url_for('site.home'))
 
-
+# add car function
 @site.route('/addcar', methods=['POST'])
 def add_car():
-
+    # Create variables 
     brand = request.form['brand']
     color = request.form['color']
     seat = request.form['seat']
@@ -288,20 +285,17 @@ def add_car():
 
     response = requests.post("http://localhost:8080/api/addcar", {'brand':brand, 'color':color, 'seat':seat, 'location':location, 'cost':cost})
     data = json.loads(response.text)
-    
+    # check data
     if data is None:
         flash("Cannot save the car")
     else:
         flash("Added successfully.")
     return redirect(url_for('site.home'))
 
-
+# edit car function
 @site.route('/editcar', methods=['POST'])
 def edit_car():
-    """This function is used for updating new car to db.
-    :param: (str)make, (str)bodytype, (str)color, (float)cost, (int)seats, (str)location
-    :return: redirection with success/failure string message 
-    """
+    # Create variables
     car_id = request.form['car_id']
     brand = request.form['brand']
     color = request.form['color']
@@ -311,7 +305,7 @@ def edit_car():
 
     response = requests.post("http://localhost:8080/api/editcar", {'car_id':car_id, 'brand':brand, 'color':color, 'seat':seat, 'location':location, 'cost':cost})
     data = json.loads(response.text)
-    
+    # check data
     if data is None:
         flash("Cannot update the car.")
     else:
@@ -320,10 +314,10 @@ def edit_car():
 
     print("Test")
 
-
+# delete car function
 @site.route('/delcar', methods=['POST'])
 def delete_car():
-
+    # check if user logged in
     if 'logged_in' in session:
         car_id = request.form['car_id']
 
@@ -331,15 +325,17 @@ def delete_car():
             "http://localhost:8080/api/delcar/"+str(car_id))
 
         car = json.loads(response.text)
-
+        # check car
         if car is None:
             flash("Failed to delete the car.")
         else:
             flash("Car deleted sucessfully.")
         return redirect(url_for('site.home'))
 
+# reoorted car function
 @site.route('/reportcar', methods=['POST'])
 def report_car():
+    # check if user logged in
     if 'logged_in' in session:
         car_id = request.form['car_id']
         user_id = request.form['user_id']
@@ -348,14 +344,14 @@ def report_car():
 
         response = requests.post("http://localhost:8080/api/reportcar", {'car_id': car_id, 'user_id': user_id, 'status':status, 'issue':issue})
         data = json.loads(response.text)
-        
+        # check data
         if data is None:
             flash("Cannot report the issue")
         else:
             flash("Reported sucessfully")
         return redirect(url_for('site.home'))
 
-
+# check car location function
 @site.route('/carslocation', methods=['GET', 'POST'])
 def carslocation():
 
@@ -370,22 +366,22 @@ def carslocation():
         print(response)
         location = json.loads(response.text)
 
-        # users is loggedin show them the home page
+        # display the map
         return render_template('map.html', location=location)
-        # return render_template('map.html')
-    # users is not loggedin redirect to login page
+        
+    # user does not log in will back to login page
     return redirect(url_for('site.login'))
 
-
+# uploading image function
 @site.route('/uploadimg', methods=['POST'])
 def uploadimg():
- 
+    # create variables and add path
     print(str(pathlib.Path(__file__).resolve().parents[1])+"im hereeeeeeeeeeeeeeeeeeeeeeeee")
     path = str(pathlib.Path(__file__).resolve().parents[1])
     target = os.path.join(path,'Facial recognition/dataset')
     email = session['username']
     target = target+'/'+email
-
+    #check path
     if not os.path.isdir(target):
         os.mkdir(target)
 
@@ -397,9 +393,10 @@ def uploadimg():
         file.save(destination)
     return render_template("imguploaded.html")
 
-
+# generate QR function
 @site.route('/qr', methods=['POST'])
 def generate_qr():
+    # check if user logined is engineer
     if 'logged_in' in session and session['user_class'] == 'engineer':
         car_id = request.form['car_id']
         mac_address = session['mac_address']
@@ -420,9 +417,9 @@ def generate_qr():
             return render_template("/engineer/qrcode.html", qrfile="", msg="Failed to generate QR Code.")
 
 
-
+# get reported car dunctions
 def get_reported_cars():
-
+    # check if user login is engineer
     if session['user_class'] == 'engineer':
         carissues = requests.get("http://localhost:8080/api/reportedcars/" + str(session['user_id']))
         return json.loads(carissues.text)
