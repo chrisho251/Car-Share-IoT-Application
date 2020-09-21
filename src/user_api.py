@@ -125,7 +125,7 @@ if __name__ == "__main__":
     USER = "root"
     PASSWORD = "696969"
     DATABASE = "carshare"
-        
+    
     app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://{}:{}@{}/{}".format(USER, PASSWORD, HOST, DATABASE)
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 

@@ -48,6 +48,22 @@ class Menu:
         option4 = "[4] BACK"
         print(intro, option1, option2, option3, option4,  sep='\n')
 
+    def successful_unlock(self):
+        print("""
+        ******************************
+        * CAR SUCCESSFULLY UNLOCKED! *
+        ******************************
+        """)
+        print("Hi {}, welcome to {}, id: {}\n".format(self.current_email, self.car_brand, self.car_id))
+
+    def successful_unlock_eng(self):
+        choice = input("Do you want to start the repair now? [Y/N]: ")
+        if choice.lower() == 'y':
+            print("Repair in process..")
+        else:
+            self.successful_unlock_eng()
+            
+
     def get_input(self):
         option = input("Enter the number of your choice: ")
         return option
@@ -57,6 +73,7 @@ class Menu:
         if choice == '1':
             self.display_cust()
         elif choice == '2':
+            self.is_user = False
             self.display_eng()
 
     def handle_selection_cust(self):
@@ -86,6 +103,7 @@ class Menu:
         # elif choice == '3':
         #     ...
         elif choice == '4':
+            self.is_user = True
             self.display_main()
 
     def display_main(self):
@@ -104,18 +122,20 @@ class Menu:
         self.handle_selection_cust_unlock()
 
     def display_eng(self):
-        self.is_user = False
         self.clear_terminal()
         self.menu_eng()
         self.handle_selection_eng()
 
-    def display_successful_unlock(self):
-        print("""
-        ******************************
-        * CAR SUCCESSFULLY UNLOCKED! *
-        ******************************
-        """)
-        print("Hi {}, welcome to {}, id: {}".format(self.current_email, self.car_brand, self.car_id))
+    def display_successful_unlock_cust(self):
+        self.clear_terminal()
+        self.successful_unlock()
+        self.display_exit()
+    
+    def display_successful_unlock_eng(self):
+        self.clear_terminal()
+        self.successful_unlock()
+        self.successful_unlock_eng()
+        self.display_exit()
 
     def display_exit(self):
         choice1 = input("Enter Q/q to exit: ")
@@ -130,7 +150,10 @@ class Menu:
                 *********************************
                 """)
                 time.sleep(5)
+                self.is_user = True
                 self.display_main()
+            else:
+                self.display_exit()
         else:
             self.display_exit()
             
@@ -158,7 +181,10 @@ class Menu:
         if authentication == "valid":
             self.current_email = email
             self.unlock_time = datetime.now().timestamp()
-            self.display_successful_unlock()
+            if self.is_user:
+                self.display_successful_unlock_cust()
+            else:
+                self.display_successful_unlock_eng()
         elif authentication == "invalid":
             print("Invalid user, please login again!")
             self.display_main()

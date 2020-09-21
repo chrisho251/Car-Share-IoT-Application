@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 #reference : code from the lecture
-import bluetooth
-import os
 import time
+import bluetooth
 from sense_hat import SenseHat
 from client import Client
 
