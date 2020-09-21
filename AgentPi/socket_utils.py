@@ -4,9 +4,7 @@ import socket, json, struct, sys, os
 
 # This method is used to send the json over socket
 def sendJson(sock, obj):
-    """ This method is used to send the json over socket
-    :param (object)object
-    """
+    """Function to send json"""
     json_string = json.dumps(obj)
     data = json_string.encode("utf-8")
     json_length = struct.pack("!i", len(data))
@@ -15,9 +13,7 @@ def sendJson(sock, obj):
 
 # This method is used to receive a json from socket
 def receiveJson(sock):
-    """ This method is used to receive a json from socket
-    :param (object)socket
-    """
+    """Function to receive json"""
     buffer = sock.recv(4)
     if buffer:
         print('Data received')

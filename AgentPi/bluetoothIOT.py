@@ -6,14 +6,17 @@ from sense_hat import SenseHat
 from client import Client
 
 class BluetoothIOT:
+    """Class to listen for mac address using bluetooth"""
     # Main function
     def main(self):
+        """Main function"""
         user_name = input("\nEnter your email: ")
         device_name = input("Enter the name of your phone: ")
         return self.search(user_name, device_name)
         
     # Search for device based on device's name
     def search(self,user_name, device_name):
+        """Function to search for device with device_name"""
         while True:
             device_address = None
             print("Searching for device..")

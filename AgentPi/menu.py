@@ -8,6 +8,7 @@ from qr_auth import Qr_auth
 
 
 class Menu:
+    """Console menu class"""
     INVALID_INPUT = "Invalid input, please try again!"
     INVALID_USER = "Invalid user, please login again!"
     client = Client()
@@ -25,6 +26,7 @@ class Menu:
     is_return = False
 
     def main_menu(self):
+        """Function to print main menu"""
         welcome = """
         ************************
         * WELCOME TO CARSHARE! *
@@ -36,6 +38,7 @@ class Menu:
         print(welcome, intro, option1, option2, sep='\n')
 
     def menu_cust(self):
+        """Function to print customer selection menu"""
         intro = "Here are the options available for you to choose from:"
         option1 = "[1] UNLOCK THE CAR"
         option2 = "[2] RETURN THE CAR"
@@ -43,6 +46,7 @@ class Menu:
         print(intro, option1, option2, option3, sep='\n')
 
     def unlock_menu_cust(self):
+        """Function to print customer unlock menu"""
         intro = "Here are the options available for you to choose from"
         option1 = "[1] UNLOCK BY CREDENTIALS"
         option2 = "[2] UNLOCK BY FACIAL RECOGNITION"
@@ -50,6 +54,7 @@ class Menu:
         print(intro, option1, option2, option3, sep='\n')
 
     def menu_eng(self):
+        """Function to print engineer unlock menu"""
         intro = "Here are the options available for you to choose from"
         option1 = "[1] UNLOCK BY CREDENTIALS"
         option2 = "[2] UNLOCK BY QR CODE"
@@ -58,6 +63,7 @@ class Menu:
         print(intro, option1, option2, option3, option4,  sep='\n')
 
     def successful_unlock(self):
+        """Function to print successful unlock message"""
         print("""
         ******************************
         * CAR SUCCESSFULLY UNLOCKED! *
@@ -67,6 +73,7 @@ class Menu:
             self.current_email, self.car_brand, self.car_id))
 
     def successful_unlock_eng(self):
+        """Function to print successful unlock message for engineer"""
         choice = input("Do you want to start the repair now? [Y/N]: ")
         if choice.lower() == 'y':
             print("Repair in process..")
@@ -74,10 +81,12 @@ class Menu:
             self.successful_unlock_eng()
 
     def get_input(self):
+        """Function to get input from user with prompt"""
         option = input("Enter the number of your choice: ")
         return option
 
     def handle_selection_main(self):
+        """Function to handle selection from main menu"""
         choice = self.get_input()
         if choice == '1':
             self.display_cust()
@@ -86,6 +95,7 @@ class Menu:
             self.display_eng()
 
     def handle_selection_cust(self):
+        """Function to handle selection from customer selection menu"""
         choice = self.get_input()
         if choice == '1':
             self.display_cust_unlock()
@@ -95,6 +105,7 @@ class Menu:
             self.display_main()
 
     def handle_selection_cust_unlock(self):
+        """Function to handle selection from customer unlock menu"""
         choice = self.get_input()
         if choice == '1':
             self.login_menu()
@@ -104,6 +115,7 @@ class Menu:
             self.display_cust()
 
     def handle_selection_eng(self):
+        """Function to handle selection from engineer selection menu"""
         choice = self.get_input()
         if choice == '1':
             self.login_menu()
@@ -116,41 +128,49 @@ class Menu:
             self.display_main()
 
     def display_main(self):
+        """Function to display main menu"""
         self.clear_terminal()
         self.main_menu()
         self.handle_selection_main()
 
     def display_cust(self):
+        """Function to display customer selection menu"""
         self.clear_terminal()
         self.menu_cust()
         self.handle_selection_cust()
 
     def display_cust_unlock(self):
+        """Function to display customer unlock menu"""
         self.clear_terminal()
         self.unlock_menu_cust()
         self.handle_selection_cust_unlock()
 
     def display_eng(self):
+        """Function to display engineer selection menu"""
         self.clear_terminal()
         self.menu_eng()
         self.handle_selection_eng()
 
     def display_successful_unlock_cust(self):
+        """Function to display successful unlock menu"""
         self.clear_terminal()
         self.successful_unlock()
         self.display_exit()
 
     def display_successful_unlock_eng(self):
+        """Function to display successful unlock menu for engineer"""
         self.clear_terminal()
         self.successful_unlock()
         self.successful_unlock_eng()
         self.display_exit()
 
     def display_return_car(self):
+        """Function to display return car message"""
         self.is_return = True
         self.login_menu()
 
     def display_exit(self):
+        """Function to display logout option"""
         choice1 = input("Enter Q/q to exit: ")
         if choice1.lower() == 'q':
             choice2 = input("Are you sure you want to logout [Y/N]: ")
@@ -174,6 +194,7 @@ class Menu:
             self.display_exit()
 
     def validate_email(self):
+        """Function to display validate email"""
         email = input("Email: ").strip()
         if email is None or email == "":
             print(self.INVALID_INPUT)
@@ -190,6 +211,7 @@ class Menu:
             return password
 
     def authenticate_user(self, email, password):
+        """Function to authenticate user by email and password"""
         authentication = self.client.validate(email, password).decode("utf-8")
         if authentication == "valid":
             self.current_email = email
@@ -206,6 +228,7 @@ class Menu:
             self.display_main()
 
     def authenticate_bluetooth(self):
+        """Function to authenticate user by mac address"""
         data = self.blu.main()
         if not bool(data):
             authentication = self.client.validate_mac(
@@ -222,6 +245,7 @@ class Menu:
             self.display_eng()
 
     def authenticate_qr(self):
+        """Function to authenticate user by qr data"""
         email = self.qrauth.read_qr()
         authentication = self.client.validate_qr(email).decode("utf-8")
         if authentication == "valid":
@@ -234,6 +258,7 @@ class Menu:
             self.display_main()
 
     def return_car(self):
+        """Function to print return car message"""
         successful_return = self.client.return_car(self.car_id)
         if successful_return:
             print("""
@@ -247,15 +272,18 @@ class Menu:
             self.display_main()
 
     def login_menu(self):
+        """Function to print login menu"""
         print("\nPlease enter your email and password")
         email = self.validate_email()
         password = self.validate_password()
         self.authenticate_user(email, password)
 
     def clear_terminal(self):
+        """Function to clear terminal"""
         os.system('clear')
 
     def main(self):
+        """Main function"""
         self.display_main()
 
 

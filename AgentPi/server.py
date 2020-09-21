@@ -5,6 +5,7 @@ import socket_utils
 
 
 class Server:
+    """Server class to receive json and send appropriate data back to AP"""
     # Empty string means to listen on all IP's on the machine, also works with IPv6.
     HOST = ""
     # Note "0.0.0.0" also works but only with IPv4.
@@ -14,6 +15,7 @@ class Server:
             "password": "696969", "mac_address": "B0:55:08:D5:86:71"}
 
     def receive_data(self):
+        """Function to receive json from AP"""
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.bind(self.ADDRESS)
             s.listen()
@@ -51,6 +53,7 @@ class Server:
         print("Done!")
 
     def validate(self, email, password):
+        """Function to validate user by email and password"""
         # res = requests.get("http://localhost:8080/api/userbyemail/"+email)
         # data = res.json()
         # if not bool(data):
@@ -69,6 +72,7 @@ class Server:
             return "invalid"
 
     def validate_mac(self, mac_add, email):
+        """Function to validate user by email and mac address"""
         # res = requests.get("http://localhost:8080/api/userbyemail/"+email)
         # data = res.json()
         # if not bool(data):
@@ -84,6 +88,7 @@ class Server:
             return "invalid"
 
     def validate_qr(self, email):
+        """Function to validate user by email through QR code"""
         res = requests.get("http://localhost:8080/api/userbyemail/"+email)
         data = res.json()
         if not bool(data):
@@ -92,6 +97,7 @@ class Server:
             return "invalid"
 
     def return_car(self, car_id):
+        """Function to update car's availability"""
         # res = requests.get("http://localhost:8080/api/cars/"+car_id)
         # data = res.json()
         # res2 = requests.put("http://localhost:8080/api/userbyemail/"+email)

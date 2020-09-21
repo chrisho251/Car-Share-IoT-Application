@@ -15,8 +15,10 @@ import qrcode
 
 
 class Qr_auth:
+    """QR class for QR code authentication"""
 
     def create_qr(self, message):
+        """Function to create QR code"""
         try:
             qr_code = qrcode.make(message)
             qr_code.save("/qrimages/")
@@ -25,6 +27,7 @@ class Qr_auth:
             return False
 
     def read_qr(self):
+        """Function to read QR code from IP Webcam"""
         # initialize the video stream and allow the camera sensor to warm up
         print("Looking for valid QR code...")
         vid_stream = VideoStream("http://10.247.193.162:8080/video").start()
