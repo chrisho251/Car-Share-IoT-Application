@@ -1,0 +1,113 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+
+<h2>Car list</h2>
+
+{% with messages = get_flashed_messages()  %}
+
+{% if messages %}
+
+{% for message in messages %}
+
+<div class="alert alert-success alert-dismisable" role="alert">
+
+    <button type="button" class="close" data-dismiss="alert" aria-label="close">
+        <span area-hidden="true"> x </span>
+    </button>
+
+    {{ message }}
+
+</div>
+
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<div class="container">
+    <div class="row">
+        <div class="col md-12">
+            <div class="carlist">
+                <table id="theBoard" class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Car_id</th>
+                            <th scope="col">Brand</th>
+                            <th scope="col">Color</th>
+                            <th scope="col">Seat</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Cost/hour</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for car in cars: %}
+                        <tr>
+                            <td>{{ car['car_id'] }}</td>
+                            <td>{{ car['brand'] }}</td>
+                            <td>{{ car['color'] }}</td>
+                            <td>{{ car['seat'] }}</td>
+                            <td>{{ car['location'] }}</td>
+                            <td>{{ car['cost'] }}</td>
+                            <td>
+                                {% if car.availability : %}
+                                <form action="{{ url_for('site.carbooking') }}" method="POST">
+                                    <input type="hidden" name="car_id" id="car_id" value="{{ car['car_id'] }}" >
+                                    <input type="date" name="from_date" id="from_date" >
+                                    <input type="date" name="to_date" id="to_date" >
+                                    <input type="submit" value="book" />
+                                  </form>
+                              {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <script>
+                $(document).ready(function () {
+                    $('theBoard').DataTable({
+                        autoFill: true
+                    });
+                });
+
+            </script>
+            {% endblock %}
+
+
+<div id="mymodal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Booking</h4>
+            </div>
+            <div class="modal-body">
+                
+                <form action="{{ url_for('site.carbooking') }}" method="POST">
+            
+                    <input type="hidden" name="car_id" id="car_id" value="{{ car['car_id'] }}" >
+
+                    <div class="form-group">
+                        <label>From date:</label>
+                        <input type="date" class="form-control" name="from_date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>To date:</label>
+                        <input type="date" class="form-control" name="to_date" required>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="submit">submit</button>
+                    </div>
+                    </form>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+

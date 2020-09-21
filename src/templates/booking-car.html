@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1>List of car</h1>
+<hr />
+
+Car_id : {{ car['car_id'] }}
+Brand : {{ car['brand'] }}
+color : {{ car['color'] }}
+seat : {{ car['seat'] }}
+location : {{ car['location'] }}
+cost : {{ car['cost'] }}
+
+<form action="carbooking" method="POST">
+    from date : <input type="date" name="from_date" required>
+    <br>
+    to date : <input type="date" required>
+    <input type="hidden" name="car_id" id="car_id" value="{{ car['car_id'] }}">
+    <button type="submit" value="carbooking"> book now</button>
+</form>
+{% endblock %}
