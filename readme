@@ -12,8 +12,7 @@ install dependencies
     install marshmallow
     install flask-marshmallow
     install marshmallow-sqlalchemy
-    install mysql-connector-python
-    install pymysql : https://pypi.org/project/PyMySQL/
+    install mysql-connector-python or install pymysql or install mysqlclient
     install sqlalchemy: https://pypi.org/project/Flask-SQLAlchemy/
     install pip install: pip install passlib
     install opencv-contrib-python
