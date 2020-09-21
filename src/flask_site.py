@@ -102,7 +102,7 @@ def profile():
 
     # Check if user logged in
     if 'logged_in' in session:
-        # display all user's information 
+        # display all users' information
         response = requests.get(
             "http://localhost:8080/api/userbyid/"+str(session['user_id']))
         acc = json.loads(response.text)
