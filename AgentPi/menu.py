@@ -119,8 +119,8 @@ class Menu:
         choice = self.get_input()
         if choice == '1':
             self.login_menu()
-        # elif choice == '2':
-        #     ...
+        elif choice == '2':
+            self.authenticate_qr()
         elif choice == '3':
             self.authenticate_bluetooth()
         elif choice == '4':

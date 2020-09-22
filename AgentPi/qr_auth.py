@@ -21,7 +21,7 @@ class Qr_auth:
         """Function to create QR code"""
         try:
             qr_code = qrcode.make(message)
-            qr_code.save("/qrimages/")
+            qr_code.save("/")
             return True
         except:
             return False
@@ -67,4 +67,4 @@ class Qr_auth:
 
 if __name__ == "__main__":
     qrauth = Qr_auth()
-    qrauth.read_qr()
+    qrauth.create_qr("giaminhphamle@gmail.com")
