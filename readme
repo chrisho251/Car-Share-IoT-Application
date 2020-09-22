@@ -15,7 +15,7 @@ install dependencies
     install mysql-connector-python or install pymysql or install mysqlclient
     install sqlalchemy: https://pypi.org/project/Flask-SQLAlchemy/
     install passlib
-    install opencv-contrib-python
+    install opencv-python
     install dlib
     install face_recognition
     install imutils
