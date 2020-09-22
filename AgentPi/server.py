@@ -48,7 +48,6 @@ class Server:
                     else:
                         conn.sendall("Invalid user".encode("utf-8"))
 
-                print("Disconnecting from client..")
             print("Closing listening socket..")
         print("Done!")
 

@@ -56,6 +56,7 @@ class Qr_auth:
                     print("[FOUND] Type: {}, Data: {}".format(
                         barcode_type, barcode_data))
                     found.add(barcode_data)
+                    return barcode_data
 
             # wait a little before scanning again
             time.sleep(1)

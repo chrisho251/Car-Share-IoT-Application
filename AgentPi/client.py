@@ -3,7 +3,7 @@ import socket_utils
 
 class Client:
     """Client class to send data through socket from AP"""
-    HOST = input("Enter IP address of server: ")
+    HOST = ""
     PORT = 65000         # The port used by the server.
     ADDRESS = (HOST, PORT)
 
