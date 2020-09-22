@@ -230,7 +230,7 @@ class Menu:
     def authenticate_bluetooth(self):
         """Function to authenticate user by mac address"""
         data = self.blu.main()
-        if not bool(data):
+        if bool(data) == True:
             authentication = self.client.validate_mac(
                 data["mac_address"], data["email"]).decode("utf-8")
             if authentication == "valid":
